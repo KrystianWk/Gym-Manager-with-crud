@@ -1,9 +1,22 @@
+using GymManagerInfractracture.Persistence;
+using Microsoft.EntityFrameworkCore;
+using GymManagerInfractracture.Extensions;
+using GymManagerInfractracture.Seeders;
+using GymManagerApplication.Extensions; 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddApplication();
+
 var app = builder.Build();
+
+var scope = app.Services.CreateScope();
+
+scope.ServiceProvider.GetRequiredService<GymManagerSeeder>().Seed().Wait();
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

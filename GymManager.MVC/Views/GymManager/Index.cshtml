@@ -1,0 +1,27 @@
+﻿@model IEnumerable<GymManagerApplication.GymManager.GymManagerDto>
+
+@{
+    ViewData["Title"] = "Gym Members";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-secondary">Add Member</a>
+</p>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="card m-3" style="width: 18rem;">
+            <div class="card-body">
+                <h5 class="card-title">@item.FirstName</h5>
+                <h5 class="card-title">@item.LastName</h5>
+                <h6 class="card-subtitle mb-2 text-muted">@item.PhoneNumber</h6>
+                <p class="card-text">Role: @item.Role</p>
+                <a href="#" class="btn btn-primary">Details</a>
+                <a href="#" class="btn btn-outline-secondary">Edit</a>
+            </div>
+        </div>
+    }
+</div>
