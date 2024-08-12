@@ -9,5 +9,7 @@ namespace GymManagerApplication.GymManager.Queries.GetAllGymMenagers
 {
     public class GetAllGymManagerQuery : IRequest<IEnumerable<GymManagerDto>>
     {
+    
+  
     }
 }

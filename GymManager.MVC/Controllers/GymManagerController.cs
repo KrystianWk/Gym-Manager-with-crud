@@ -1,23 +1,32 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using GymManagerApplication.Services;
 using GymManagerApplication;
-using GymManagerApplication.GymManager; // Assuming entities are directly under this namespace
+using GymManagerApplication.GymManager;
+using MediatR;
+using AutoMapper;
+using GymManagerApplication.GymManager.Queries.GetAllGymMenagers;
+using GymManagerApplication.GymManager.Commands.CreateGymManager; 
 
+using GymManagerApplication.GymManager.Commands.EditGymManager;
+using GymManagerApplication.GymManager.Queries.GetGymManagerById;
+using GymManagerApplication.GymManager.Commands.DeleteGymManager;
 
 namespace GymManager.MVC.Controllers
 {
     public class GymManagerController : Controller
     {
-        private readonly IGymManagerServices _gymManagerServices;
+        private readonly IMediator _mediator;
+        private readonly IMapper _mapper;
 
-        public GymManagerController(IGymManagerServices gymManagerServices)
+        public GymManagerController(IMediator mediator, IMapper mapper)
         {
-            _gymManagerServices = gymManagerServices;
+            _mediator = mediator;
+            _mapper = mapper;
         }
 
         public async Task <IActionResult> Index()
         {
-            var gymManagers = await _gymManagerServices.GetAll();
+            var gymManagers = await _mediator.Send(new GetAllGymManagerQuery());
             return View(gymManagers);
         }
 
@@ -25,25 +34,58 @@ namespace GymManager.MVC.Controllers
         {
             return View();
         }
-        [Route("GymManager/{encodedName}/Details")]
-        public async Task<IActionResult> Details(string encodedName)
-        {
-            var gymManager = await _gymManagerServices.GetByEncodedName(encodedName);
-            return View(gymManager);
-        }
-
-
         [HttpPost]
-        public async Task<IActionResult> Create(GymManagerDto gymManager)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (ModelState.IsValid)
-            {
-                await _gymManagerServices.Create(gymManager);
-                TempData["SuccessMessage"] = "Gym Manager created successfully."; // Feedback to user
-                return RedirectToAction("Index"); // Assuming there's an Index view to list Gym Managers
-            }
-           
-            return View(gymManager);
+            var command = new DeleteGymManagerCommand(id);
+            await _mediator.Send(command);
+            return RedirectToAction("Index");
         }
+        [Route("GymManager/{id}/Details")]
+        public async Task<IActionResult> Details(int id)
+        {
+            var dto = await _mediator.Send(new GetGymManagerByIdQuery(id));
+            if (dto == null)
+            {
+                // Handle the case when the gym manager is not found
+                return NotFound($"GymManager with Id {id} not found.");
+            }
+            return View(dto);
+        }
+
+        [Route("GymManager/{id}/Edit")]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var dto = await _mediator.Send(new GetGymManagerByIdQuery(id)); // Use the new query
+
+            EditGymManagerCommand model = _mapper.Map<EditGymManagerCommand>(dto);
+            return View(model);
+        }
+        [HttpPost]
+        [Route("GymManager/{id}/Edit")]
+        public async Task<IActionResult> Edit(int id, EditGymManagerCommand commands)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(commands);
+
+            }
+            await _mediator.Send(commands);
+            return RedirectToAction("Index");
+
+        }
+        [HttpPost]
+        public async Task<IActionResult> Create(CreateGymManagerCommands commands)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(commands); 
+
+            }
+           await _mediator.Send(commands);
+            return RedirectToAction("Index");
+            
+        }
+
     }
 }

@@ -12,5 +12,8 @@ namespace GymManagerDomain.Interfaces
         Task Create(GymManager gymManager);
         Task<GymManager?> GetByEmail(string email);
         Task<IEnumerable<GymManager>> GetAll();
+        Task<GymManager?> GetByIdAsync(int id);
+        void Delete(GymManager gymManager);
+        Task Commit();
     }
 }

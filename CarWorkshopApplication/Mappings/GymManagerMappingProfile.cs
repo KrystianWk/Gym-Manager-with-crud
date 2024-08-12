@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using GymManagerApplication.GymManager;
 using GymManagerApplication.Entities;
+using GymManagerApplication.GymManager.Commands.EditGymManager;
 
 namespace GymManagerApplication.Mappings
 {
@@ -27,6 +28,8 @@ namespace GymManagerApplication.Mappings
                 .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.Contact.PhoneNumber))
                 .ForMember(dest => dest.PostalCode, opt => opt.MapFrom(src => src.Contact.PostalCode))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Contact.Email));
+
+            CreateMap<GymManagerDto, EditGymManagerCommand>();
         }
     }
 }

@@ -21,7 +21,8 @@ namespace GymManagerApplication.GymManager.Queries.GetAllGymMenagers
         public async Task<IEnumerable<GymManagerDto>> Handle(GetAllGymManagerQuery request, CancellationToken cancellationToken)
         {
             var GymManagers = await _gymManagerRepository.GetAll();
-            return _mapper.Map<IEnumerable<GymManagerDto>>(GymManagers);
+            var dtos =   _mapper.Map<IEnumerable<GymManagerDto>>(GymManagers);
+            return dtos;
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text;
+using System.Xml.Linq;
 
 namespace GymManagerApplication.Entities
 {
@@ -15,10 +17,15 @@ namespace GymManagerApplication.Entities
         public bool IsMembershipPaid { get; set; }
         public MembershipType MembershipType { get; set; }
         public DateTime JoinedAt { get; set; }
-  
+        public string EncodedName { get; private set; } = default!;
         public string? Description { get; set; }
         public DateTime CreatedAt { get; set; }
-        public virtual GymManagerContact? Contact { get; set; } 
+        public virtual GymManagerContact? Contact { get; set; }
+
+        public string EncodeName()
+        {
+            return Convert.ToBase64String(Encoding.UTF8.GetBytes($"{FirstName} {LastName}"));
+        }
     }
 
     public enum Role
