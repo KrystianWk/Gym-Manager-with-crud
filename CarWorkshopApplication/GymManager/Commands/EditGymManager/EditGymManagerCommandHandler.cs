@@ -1,4 +1,5 @@
-﻿using GymManagerDomain.Interfaces;
+﻿using GymManagerApplication.ApplicationUser;
+using GymManagerDomain.Interfaces;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,16 +11,25 @@ namespace GymManagerApplication.GymManager.Commands.EditGymManager
     public class EditGymManagerCommandHandler : IRequestHandler<EditGymManagerCommand, Unit>
     {
         private readonly IGymManagerRepository _repository;
-
-        public EditGymManagerCommandHandler(IGymManagerRepository repository)
+        private readonly IUserContext _userContext; 
+        public EditGymManagerCommandHandler(IGymManagerRepository repository, IUserContext userContext)
         {
             _repository = repository;
+            _userContext = userContext;
         }
 
         public async Task<Unit> Handle(EditGymManagerCommand request, CancellationToken cancellationToken)
         {
             var gymManager = await _repository.GetByIdAsync(request.Id);
 
+            var user =  _userContext.GetCurrentUser();
+            var isEditable = user != null && gymManager.CreatedById == user.Id;
+
+
+            if (!isEditable)
+            {
+               return Unit.Value;
+            }
             if (gymManager == null)
             {
                 throw new Exception("Gym Manager not found");

@@ -37,5 +37,7 @@ namespace GymManagerApplication.GymManager
         public string? PostalCode { get; set; }
         public string? Address { get; set; }
         public string? EncodedName { get; set; }
+
+        public bool isEditable { get; set; }    
     }
 }

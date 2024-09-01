@@ -7,13 +7,15 @@ using AutoMapper;
 using GymManagerApplication.GymManager;
 using GymManagerApplication.Entities;
 using GymManagerApplication.GymManager.Commands.EditGymManager;
+using GymManagerApplication.ApplicationUser;
 
 namespace GymManagerApplication.Mappings
 {
     public class GymManagerMappingProfile : Profile
     {
-        public GymManagerMappingProfile()
+        public GymManagerMappingProfile(IUserContext userContext)
         {
+            var user = userContext.GetCurrentUser();
             CreateMap<GymManagerDto, GymManagerApplication.Entities.GymManager>()
                 .ForMember(dest => dest.Contact, opt => opt.MapFrom(src => new GymManagerContact()
                 {
@@ -24,6 +26,7 @@ namespace GymManagerApplication.Mappings
                 }));
               
             CreateMap<GymManagerApplication.Entities.GymManager, GymManagerDto>()
+                .ForMember(dest => dest.isEditable, opt => opt.MapFrom(src => user != null && src.CreatedById == user.Id))
                 .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.Contact.City))
                 .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.Contact.PhoneNumber))
                 .ForMember(dest => dest.PostalCode, opt => opt.MapFrom(src => src.Contact.PostalCode))

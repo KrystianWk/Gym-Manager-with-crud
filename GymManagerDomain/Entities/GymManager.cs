@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Security.Principal;
 using System.Text;
 using System.Xml.Linq;
 
@@ -17,15 +19,15 @@ namespace GymManagerApplication.Entities
         public bool IsMembershipPaid { get; set; }
         public MembershipType MembershipType { get; set; }
         public DateTime JoinedAt { get; set; }
-        public string EncodedName { get; private set; } = default!;
+        
         public string? Description { get; set; }
         public DateTime CreatedAt { get; set; }
         public virtual GymManagerContact? Contact { get; set; }
 
-        public string EncodeName()
-        {
-            return Convert.ToBase64String(Encoding.UTF8.GetBytes($"{FirstName} {LastName}"));
-        }
+        public string? CreatedById { get; set; }
+        public IdentityUser? CreatedBy { get; set; }
+
+       
     }
 
     public enum Role

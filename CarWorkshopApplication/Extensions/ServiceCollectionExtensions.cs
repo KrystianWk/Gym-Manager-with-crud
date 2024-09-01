@@ -9,6 +9,7 @@ using GymManagerDomain.Interfaces;
 using MediatR;
 using AutoMapper;
 using System.Reflection;
+using GymManagerApplication.ApplicationUser;
 
 namespace GymManagerApplication.Extensions
 {
@@ -16,11 +17,17 @@ namespace GymManagerApplication.Extensions
     {
         public static void AddApplication(this IServiceCollection services)
         {
-
+            services.AddScoped<IUserContext, UserContext>();
             services.AddMediatR(typeof(CreateGymManagerCommands).Assembly);
             //services.AddScoped<IGymManagerServices, GymManagerServices>();
-
-            services.AddAutoMapper(typeof(GymManagerMappingProfile));
+            services.AddScoped(provider => new MapperConfiguration(cfg =>
+            {
+                var scope = provider.CreateScope();
+                var userContext = scope.ServiceProvider.GetRequiredService<IUserContext>();
+                cfg.AddProfile(new GymManagerMappingProfile(userContext));
+            }).CreateMapper()
+            );
+          //  services.AddAutoMapper(typeof(GymManagerMappingProfile));
 
             services.AddValidatorsFromAssemblyContaining<CreateGymManagerCommandHandler>()
                    .AddFluentValidationAutoValidation()

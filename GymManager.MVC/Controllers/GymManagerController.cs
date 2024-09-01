@@ -10,6 +10,7 @@ using GymManagerApplication.GymManager.Commands.CreateGymManager;
 using GymManagerApplication.GymManager.Commands.EditGymManager;
 using GymManagerApplication.GymManager.Queries.GetGymManagerById;
 using GymManagerApplication.GymManager.Commands.DeleteGymManager;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GymManager.MVC.Controllers
 {
@@ -29,11 +30,19 @@ namespace GymManager.MVC.Controllers
             var gymManagers = await _mediator.Send(new GetAllGymManagerQuery());
             return View(gymManagers);
         }
-
+        [Authorize(Roles = "Owner")]
         public IActionResult Create()
         {
+            // Check if the user is authenticated = > if not, redirect to the login page == [authorize]
+            /*    if(!User.Identity.IsAuthenticated || User.Identity == null )
+                {
+                    return RedirectToPage("/Account/Login", new { area = "Identity" });
+                }   
+            */
+        
             return View();
         }
+
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
@@ -41,6 +50,7 @@ namespace GymManager.MVC.Controllers
             await _mediator.Send(command);
             return RedirectToAction("Index");
         }
+
         [Route("GymManager/{id}/Details")]
         public async Task<IActionResult> Details(int id)
         {
@@ -58,6 +68,11 @@ namespace GymManager.MVC.Controllers
         {
             var dto = await _mediator.Send(new GetGymManagerByIdQuery(id)); // Use the new query
 
+            if (!dto.isEditable)
+            {
+                return RedirectToAction("NoAccess", "Home");
+            }
+
             EditGymManagerCommand model = _mapper.Map<EditGymManagerCommand>(dto);
             return View(model);
         }
@@ -74,7 +89,10 @@ namespace GymManager.MVC.Controllers
             return RedirectToAction("Index");
 
         }
+        
+        
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Create(CreateGymManagerCommands commands)
         {
             if (!ModelState.IsValid)

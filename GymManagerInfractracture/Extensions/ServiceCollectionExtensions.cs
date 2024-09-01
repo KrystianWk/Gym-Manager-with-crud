@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using GymManagerInfractracture.Seeders;
 using GymManagerDomain.Interfaces;
 using GymManagerInfractracture.Repositories;
+using Microsoft.AspNetCore.Identity;
 
 namespace GymManagerInfractracture.Extensions
 {
@@ -23,6 +24,10 @@ namespace GymManagerInfractracture.Extensions
                     configuration.GetConnectionString("GymManager"),
                     b => b.MigrationsAssembly("GymManagerInfractracture")));
 
+            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddRoles<IdentityRole>() 
+                .AddEntityFrameworkStores<GymManagerDbContext>();   
+                
             services.AddScoped<GymManagerSeeder>();
 
             services.AddScoped<IGymManagerRepository, GymManagerRepository>();

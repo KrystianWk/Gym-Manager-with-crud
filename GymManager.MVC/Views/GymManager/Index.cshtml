@@ -20,11 +20,15 @@
                 <h6 class="card-subtitle mb-2 text-muted">@item.PhoneNumber</h6>
                 <p class="card-text">Role: @item.Role</p>
                 <a class="btn btn-primary" asp-controller="GymManager" asp-action="Details" asp-route-id="@item.Id">Details</a>
+               @if (item.isEditable)
+               {
                 <a class="btn btn-outline-secondary" asp-controller="GymManager" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
                 <form asp-controller="GymManager" asp-action="Delete" method="post" style="display:inline;">
                     <input type="hidden" name="id" value="@item.Id" />
                     <button type="submit" class="btn btn-danger">Delete</button>
+               
                 </form>
+               }
             </div>
         </div>
     }
