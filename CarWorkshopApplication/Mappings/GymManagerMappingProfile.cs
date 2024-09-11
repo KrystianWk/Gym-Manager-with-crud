@@ -26,7 +26,7 @@ namespace GymManagerApplication.Mappings
                 }));
               
             CreateMap<GymManagerApplication.Entities.GymManager, GymManagerDto>()
-                .ForMember(dest => dest.isEditable, opt => opt.MapFrom(src => user != null && src.CreatedById == user.Id))
+                .ForMember(dest => dest.isEditable, opt => opt.MapFrom(src => user != null && (src.CreatedById == user.Id || user.IsInRole("Moderator")) ))
                 .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.Contact.City))
                 .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.Contact.PhoneNumber))
                 .ForMember(dest => dest.PostalCode, opt => opt.MapFrom(src => src.Contact.PostalCode))

@@ -11,6 +11,9 @@ using GymManagerApplication.GymManager.Commands.EditGymManager;
 using GymManagerApplication.GymManager.Queries.GetGymManagerById;
 using GymManagerApplication.GymManager.Commands.DeleteGymManager;
 using Microsoft.AspNetCore.Authorization;
+using GymManager.MVC.Models;
+using Newtonsoft.Json;
+using GymManager.MVC.Extensions;
 
 namespace GymManager.MVC.Controllers
 {
@@ -100,7 +103,11 @@ namespace GymManager.MVC.Controllers
                 return View(commands); 
 
             }
-           await _mediator.Send(commands);
+           //await _mediator.Send(commands);
+
+            this.SetNotification("success", $"Gym Manager created: {commands.LastName}");
+           
+
             return RedirectToAction("Index");
             
         }

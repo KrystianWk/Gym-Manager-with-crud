@@ -23,7 +23,7 @@ namespace GymManagerApplication.GymManager.Commands.EditGymManager
             var gymManager = await _repository.GetByIdAsync(request.Id);
 
             var user =  _userContext.GetCurrentUser();
-            var isEditable = user != null && gymManager.CreatedById == user.Id;
+            var isEditable = user != null && (gymManager.CreatedById == user.Id || user.IsInRole("Moderator"));
 
 
             if (!isEditable)
